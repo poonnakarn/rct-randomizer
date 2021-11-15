@@ -27,8 +27,12 @@ def home(request):
     if request.method == "POST":
         if 'addcsv' in request.POST:
 
-            csv_file = request.FILES['file']
-                
+            csv_file = request.FILES.get('file', False)
+            
+            if not csv_file:
+                messages.error(request, "Please upload CSV file!")
+                return redirect("home")
+
             if not csv_file.name.endswith('.csv'):
                 messages.error(request, "Only CSV files are supported!")
                 return redirect("home")
