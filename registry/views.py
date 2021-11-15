@@ -9,7 +9,7 @@ import logging
 def home(request):
 
     template = "home.html"
-    data = Sequence.objects.all()
+    data = Sequence.objects.all().order_by('id')
     patient_form = PatientForm()
 
     context = {
@@ -26,8 +26,9 @@ def home(request):
     # handling POST
     if request.method == "POST":
         if 'addcsv' in request.POST:
-            csv_file = request.FILES['file']
 
+            csv_file = request.FILES['file']
+                
             if not csv_file.name.endswith('.csv'):
                 messages.error(request, "Only CSV files are supported!")
                 return redirect("home")
