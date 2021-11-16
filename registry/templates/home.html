@@ -39,33 +39,46 @@
   {{ patient_form|crispy }}
   <button type="submit" name="addpatient" class="btn btn-primary">Enroll Patient</button>
 </form>
-</br>
 
-<div>
-  <table class="table text-center table-bordered">
-    <thead class="table-dark">
-      <tr>
-        <th class="col-1">ID</th>
-        <th class="col-2">Treatment</th>
-        <th class="col-3">HN</th>
-        <th class="col-3">Name</th>
-        <th class="col-3">Time</th>
-      </tr>
-    </thead>
-    <tbody>
-      {% for sequence in sequences %}
-        <tr>
-          <td>{{sequence.id}}</td>
-          <td>{{sequence.arm}}</td>
-          <td>{{sequence.patient.hospital_number}}</td>
-          <td>{{sequence.patient.name}}</td>
-          <td>{{sequence.patient.time}}</td>
-        </tr>
-      {% endfor %}
-    </tbody>
-  </table>
+<div class="accordion" id="accordionExample">
+  <div class="accordion-item">
+    <h2 class="accordion-header" id="headingOne">
+      <button class="accordion-button collapsed" type="button" data-bs-toggle="collapse" data-bs-target="#collapseOne" aria-expanded="true" aria-controls="collapseOne">
+        Randomization Table
+      </button>
+    </h2>
+    <div id="collapseOne" class="accordion-collapse collapse" aria-labelledby="headingOne" data-bs-parent="#accordionExample">
+      <div class="accordion-body">
+        <div>
+          <table class="table text-center table-bordered">
+            <thead class="table-dark">
+              <tr>
+                <th class="col-1">ID</th>
+                <th class="col-2">Treatment</th>
+                <th class="col-3">HN</th>
+                <th class="col-3">Name</th>
+                <th class="col-3">Time</th>
+              </tr>
+            </thead>
+            <tbody>
+              {% for sequence in sequences %}
+                <tr>
+                  <td>{{sequence.id}}</td>
+                  <td>{{sequence.arm}}</td>
+                  <td>{{sequence.patient.hospital_number}}</td>
+                  <td>{{sequence.patient.name}}</td>
+                  <td>{{sequence.patient.time}}</td>
+                </tr>
+              {% endfor %}
+            </tbody>
+          </table>
+        </div>
+      </div>
+    </div>
+  </div>
 </div>
 
+</br>
 <div>
   <form action="" method="POST" enctype="multipart/form-data">
         {% csrf_token %}
