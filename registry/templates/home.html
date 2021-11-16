@@ -37,6 +37,7 @@
         <th class="col-2">Treatment</th>
         <th class="col-3">HN</th>
         <th class="col-3">Name</th>
+        <th class="col-3">Time</th>
       </tr>
     </thead>
     <tbody>
@@ -46,6 +47,7 @@
           <td>{{sequence.arm}}</td>
           <td>{{sequence.patient.hospital_number}}</td>
           <td>{{sequence.patient.name}}</td>
+          <td>{{sequence.patient.time}}</td>
         </tr>
       {% endfor %}
     </tbody>
