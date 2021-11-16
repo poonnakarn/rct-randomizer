@@ -70,7 +70,7 @@ def home(request):
                     sequence.save()
                     break
             
-            messages.success(request, "Patient " + hn + " was enrolled to "+arm+" arm!")
+            messages.success(request, "ผู้ป่วย " + hn + " ถูกจัดอยู่ในกลุ่ม "+arm)
             return redirect("home")
 
 
