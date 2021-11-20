@@ -1,0 +1,67 @@
+{% extends 'base.html' %}
+{% load static %}
+
+{% block title %}
+<title>CCEC RCT Registry</title>
+{% endblock title %}
+
+{% block content %}
+<div class="container">
+<div>
+  </br>
+  {% if messages %}
+    {% for message in messages %}
+      <div class="alert alert-success alert-dismissible fade show" role="alert">
+        <p>Enrolled!</p>
+        <hr>
+        <h1>{{ message }}</h1>
+        <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
+      </div>
+    {% endfor %}
+  {% endif %}
+  
+  <h1>{{ welcome_text }}</h1>
+</div>
+
+
+<table class="table text-center table-bordered">
+  <thead class="table-dark">
+    <tr>
+      <th class="col-2">Time</th>
+      <th class="col-1">HN</th>
+      <th class="col-2">Name</th>
+      <th class="col-2">Phone</th>
+      <th class="col-1">Eligible</th>
+      <th class="col-1">Enroll</th>
+    </tr>
+  </thead>
+  <tbody>
+    {% for patient in patients %}
+      <tr>
+        <td>{{patient.time}}</td>
+        <td>{{patient.hospital_number}}</td>
+        <td>{{patient.name}}</td>
+        <td>{{patient.phone_number}}</td>
+        <td>
+          {% if patient.eligible == True %}
+            ✓
+          {% else %}
+            X
+          {% endif %}
+        </td>
+        <td>
+          {% if patient.eligible == True and patient.enrolled == False %}
+            <a href="{% url 'enroll_patient' patient.id %}">
+              <button class="btn btn-primary">Enroll</button>
+            </a>
+          {% elif patient.eligible == True and patient.enrolled == True %}
+            <button class="btn btn-secondary" disabled>Enrolled</button>
+          {% endif %}
+        </td>
+      </tr>
+    {% endfor %}
+  </tbody>
+</table>
+
+</div>
+{% endblock content %}

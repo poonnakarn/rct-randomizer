@@ -26,6 +26,8 @@ class Patient(models.Model):
 
     eligible = models.BooleanField()
 
+    enrolled = models.BooleanField(default=False)
+
     def __str__(self):
         return self.hospital_number
 
@@ -34,6 +36,7 @@ class Sequence(models.Model):
     arm = models.CharField(max_length=10)
     patient = models.OneToOneField(
         Patient, null=True, default=None, on_delete=models.CASCADE)
+    time = models.DateTimeField(null=True, default=None)
 
     def __str__(self):
         return self.arm

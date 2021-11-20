@@ -4,7 +4,7 @@ import io
 from .models import Sequence, Patient
 from django.contrib import messages
 from .forms import PatientForm
-import logging
+import datetime
 
 
 def screening(request):
@@ -26,7 +26,7 @@ def screening(request):
     # handling POST
     if request.method == "POST":
 
-        all_sequences = Sequence.objects.all()
+        # all_sequences = Sequence.objects.all()
         form = PatientForm(request.POST or None)
         # arm = None
         # hn = None
@@ -54,16 +54,14 @@ def screening(request):
         return redirect("screening")
 
 
-def enroll(request):
+def enroll_list(request):
 
-    template = "screening.html"
+    template = "enroll_list.html"
     data = Sequence.objects.all().order_by('id')
-    patient_form = PatientForm()
 
     context = {
-        "welcome_text": "ยินดีต้อนรับสู่ CCEC RCT Registry",
+        "welcome_text": "ตารางการ Randomization",
         'sequences': data,
-        'patient_form': patient_form,
     }
 
     # handling GET
@@ -72,61 +70,67 @@ def enroll(request):
 
     # handling POST
     if request.method == "POST":
-        if 'addcsv' in request.POST:
 
-            csv_file = request.FILES.get('file', False)
+        csv_file = request.FILES.get('file', False)
 
-            if not csv_file:
-                messages.error(request, "Please upload CSV file!")
-                return redirect("enroll")
+        if not csv_file:
+            messages.error(request, "Please upload CSV file!")
+            return redirect("enroll_list")
 
-            if not csv_file.name.endswith('.csv'):
-                messages.error(request, "Only CSV files are supported!")
-                return redirect("enroll")
+        if not csv_file.name.endswith('.csv'):
+            messages.error(request, "Only CSV files are supported!")
+            return redirect("enroll_list")
 
-            data_set = csv_file.read().decode('UTF-8')
+        data_set = csv_file.read().decode('UTF-8')
 
-            io_string = io.StringIO(data_set)
+        io_string = io.StringIO(data_set)
 
-            # skip the header
-            next(io_string)
+        # skip the header
+        next(io_string)
 
-            for row in csv.reader(io_string, delimiter=','):
-                p = Sequence.objects.create(
-                    arm=row[1],
-                    patient=None
-                )
+        for row in csv.reader(io_string, delimiter=','):
+            p = Sequence.objects.create(
+                arm=row[1],
+                patient=None
+            )
 
-            messages.success(request, "Added random sequence!")
+        messages.success(request, "Random sequence added!")
 
-            return redirect("screening")
-        elif 'addpatient' in request.POST:
+        return redirect("enroll_list")
 
-            all_sequences = Sequence.objects.all()
-            form = PatientForm(request.POST or None)
-            # arm = None
-            # hn = None
-            if form.is_valid():
-                if len(form.instance.inclusion) == 3 and len(form.instance.exclusion) == 0:
-                    form.instance.eligible = True
-                    messages.success(request, 'Success ผู้ป่วย ' +
-                                     form.instance.hospital_number + ' ผ่านการ Screening')
-                else:
-                    form.instance.eligible = False
-                    messages.error(request, 'Fail ผู้ป่วย ' +
-                                   form.instance.hospital_number + ' ไม่ผ่านการ Screening')
 
-                form.save()
+def screened(request):
+    template = "screened.html"
+    data = Patient.objects.order_by('-eligible', 'enrolled', '-time')
 
-            else:
-                messages.error(request, "Fail: กรุณาเลือก inclusion/exclusion")
-            # for sequence in all_sequences:
-            #     if not sequence.patient:
-            #         p = form.save()
-            #         sequence.patient = p
-            #         arm = sequence.arm
-            #         hn = p.hospital_number
-            #         sequence.save()
-            #         break
+    context = {
+        "welcome_text": "รายชื่อผู้ป่วยที่ผ่านการคัดกรอง",
+        'patients': data,
+    }
 
-            return redirect("screening")
+    # handling GET
+    return render(request, template, context)
+
+
+def enroll_patient(request, patient_id):
+    patient = Patient.objects.get(pk=patient_id)
+
+    all_sequences = Sequence.objects.all().order_by('id')
+
+    for sequence in all_sequences:
+        if not sequence.patient:
+            sequence.patient = patient
+            sequence.time = datetime.datetime.now()
+            arm = sequence.arm
+            hn = patient.hospital_number
+            sequence.save()
+
+            patient.enrolled = True
+            patient.save()
+
+            messages.success(request, 'ผู้ป่วย ' + hn +
+                             ' ถูกจัดเข้ากลุ่ม ' + arm)
+
+            break
+
+    return redirect("screened")

@@ -1,0 +1,75 @@
+{% extends 'base.html' %}
+{% load static %}
+{% load crispy_forms_tags %}
+
+{% block title %}
+<title>CCEC RCT Registry</title>
+{% endblock title %}
+
+{% block content %}
+<div class="container">
+<div>
+  </br>
+  {% if messages %}
+    {% for message in messages %}
+      {% if 'Success' in message.message %}
+        <div class="alert alert-success alert-dismissible fade show" role="alert">
+                  
+          <p>Screening สำเร็จ!</p>
+          <hr>
+          <h1>{{ message }}</h1>
+
+          <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
+        </div>
+      {% else %}
+        <div class="alert alert-danger alert-dismissible fade show" role="alert">
+          {{ message }}
+          <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
+        </div>
+      {% endif %}
+    {% endfor %}
+  {% endif %}
+  
+  <h1>{{ welcome_text }}</h1>
+</div>
+
+
+<table class="table text-center table-bordered">
+  <thead class="table-dark">
+    <tr>
+      <th class="col-1">Enroll ID</th>
+      <th class="col-1">Treatment</th>
+      <th class="col-3">HN</th>
+      <th class="col-3">Name</th>
+      <th class="col-3">Time</th>
+    </tr>
+  </thead>
+  <tbody>
+    {% for sequence in sequences %}
+      <tr>
+        <td>{{sequence.id}}</td>
+        <td>{{sequence.arm}}</td>
+        <td>{{sequence.patient.hospital_number}}</td>
+        <td>{{sequence.patient.name}}</td>
+        <td>{{sequence.time}}</td>
+      </tr>
+    {% endfor %}
+  </tbody>
+</table>
+
+</br>
+<div>
+  <form action="" method="POST" enctype="multipart/form-data">
+        {% csrf_token %}
+        
+        <div class="mb-3">
+          <label for="file1" class="form-label">อัพโหลด randomized sequence (CSV format)</label>
+          <input class="form-control" type="file" id="file1" name="file">
+        </div>
+        <button class="btn btn-primary" type="submit" name="addcsv">Upload</button>
+        <small>Only accepts CSV files</small>
+
+  </form>
+</div>
+</div>
+{% endblock content %}
