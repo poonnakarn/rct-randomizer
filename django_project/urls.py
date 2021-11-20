@@ -4,5 +4,6 @@ from registry import views
 
 urlpatterns = [
     path('admin/', admin.site.urls),
-    path("", views.home, name="home"),
+    path("screening/", views.screening, name="screening"),
+    # path("enroll/", views.enroll, name="enroll"),
 ]
