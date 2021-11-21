@@ -12,7 +12,7 @@
   </br>
   {% if messages %}
     {% for message in messages %}
-      {% if 'Success' in message.message %}
+      {% if 'Success' in message.message or 'กลุ่ม' in message.message %}
         <div class="alert alert-success alert-dismissible fade show" role="alert">
           <h1>{{ message }}</h1>
           <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
