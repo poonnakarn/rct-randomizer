@@ -24,8 +24,8 @@ class Patient(models.Model):
     inclusion = MultiSelectField(choices=INCLUSION_CHOICES, blank=True)
     exclusion = MultiSelectField(choices=EXCLUSION_CHOICES, blank=True)
 
-    eligible = models.BooleanField()
-
+    eligible = models.BooleanField(default=False)
+    proficient = models.BooleanField(null=True, default=None)
     enrolled = models.BooleanField(default=False)
 
     def __str__(self):

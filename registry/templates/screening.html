@@ -35,4 +35,59 @@
   <button type="submit" name="addpatient" class="btn btn-primary">Screen Patient</button>
 </form>
 
+
+<table class="table text-center table-bordered">
+  <thead class="table-dark">
+    <tr>
+      <th class="col-1">ID</th>
+      <th class="col-2">HN</th>
+      <th class="col-2">Name</th>
+      <th class="col-1">Eligible</th>
+      <th class="col-1">Proficient</th>
+      <th class="col-2">Enroll</th>
+    </tr>
+  </thead>
+  <tbody>
+    {% for patient in patients %}
+      
+        <tr {% if patient.eligible and not patient.enrolled and not patient.proficient %}class="table-warning"{% endif %} {% if patient.enrolled %}class="table-success"{% endif %} {% if patient.eligible and patient.proficient and not patient.enrolled %}class="table-info"{% endif %}>
+          <td>{{patient.id}}</td>
+          <td>{{patient.hospital_number}}</td>
+          <td>{{patient.name}}</td>
+          <td>
+            {% if patient.eligible == True %}
+              ✓
+            {% else %}
+              X
+            {% endif %}
+          </td>
+          <td>
+          {% if not patient.enrolled and patient.eligible %}
+            <a href="{% url 'edit_patient' patient.id %}">
+          {% endif %}
+              {% if patient.proficient == True %}
+                ✓
+              {% elif patient.proficient == False %}
+                X
+              {% else %}
+                N/A
+              {% endif %}
+            {% if not patient.enrolled and patient.eligible %}
+              </a>
+            {% endif %}
+          </td>
+          <td>
+            {% if patient.eligible == True and patient.proficient and patient.enrolled == False %}
+              <a href="{% url 'enroll_patient' patient.id %}">
+                <button class="btn btn-primary">Enroll</button>
+              </a>
+            {% elif patient.enrolled == True %}
+              <button class="btn btn-secondary" disabled>Enrolled</button>
+            {% endif %}
+          </td>
+        </tr>
+    {% endfor %}
+  </tbody>
+</table>
+
 {% endblock content %}

@@ -10,13 +10,13 @@ import datetime
 def screening(request):
 
     template = "screening.html"
-    # data = Sequence.objects.all().order_by('id')
+    data = Patient.objects.order_by('id')
     patient_form = PatientForm()
 
     context = {
         "welcome_text": "ยินดีต้อนรับสู่ CCEC RCT Screening",
-        # 'sequences': data,
         'patient_form': patient_form,
+        'patients': data
     }
 
     # handling GET
@@ -133,4 +133,40 @@ def enroll_patient(request, patient_id):
 
             break
 
-    return redirect("screened")
+    return redirect("screening")
+
+
+def edit_patient(request, patient_id):
+
+    patient = Patient.objects.get(pk=patient_id)
+    initial_dict = {
+        "hospital_number": patient.hospital_number,
+        "name": patient.name,
+        "phone_number": patient.phone_number,
+        "inclusion": patient.inclusion,
+        "exclusion": patient.exclusion,
+    }
+
+    template = 'edit_patient.html'
+    patient_form = PatientForm(initial=initial_dict)
+    context = {
+        'header_text': 'ประเมิน Proficiency ของ '+patient.hospital_number,
+        'form': patient_form,
+        'patient_obj': patient
+    }
+
+    if request.method == 'GET':
+        return render(request, template, context)
+    elif request.method == 'POST':
+
+        if request.POST.get('proficient') == 'true':
+            patient.proficient = True
+            messages.success(request, 'ผู้ป่วย ' + patient.hospital_number +
+                             ' ผ่านการประเมิน Proficiency (Success)')
+        else:
+            patient.proficient = False
+            messages.error(request, 'ผู้ป่วย ' + patient.hospital_number +
+                           ' ไม่ผ่านการประเมิน Proficiency (Failed)')
+        patient.save()
+
+        return redirect('screening')
