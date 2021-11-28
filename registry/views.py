@@ -16,7 +16,8 @@ def screening(request):
     context = {
         "welcome_text": "ยินดีต้อนรับสู่ CCEC RCT Screening",
         'patient_form': patient_form,
-        'patients': data
+        'patients': data,
+        # 'sequence': enroll_data
     }
 
     # handling GET
@@ -129,7 +130,7 @@ def enroll_patient(request, patient_id):
             patient.save()
 
             messages.success(request, 'ผู้ป่วย ' + hn +
-                             ' ถูกจัดเข้ากลุ่ม ' + arm)
+                             ' ถูกจัดเข้ากลุ่ม ' + arm + ' (Enroll ID = ' + str(patient.sequence.id) + ' )')
 
             break
 
