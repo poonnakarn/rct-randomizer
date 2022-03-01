@@ -35,8 +35,8 @@ class Patient(models.Model):
 class Sequence(models.Model):
     arm = models.CharField(max_length=10)
     patient = models.OneToOneField(
-        Patient, null=True, default=None, on_delete=models.CASCADE, related_name='sequence')
-    time = models.DateTimeField(null=True, default=None)
+        Patient, null=True, default=None, on_delete=models.CASCADE, related_name='sequence', blank=True)
+    time = models.DateTimeField(null=True, default=None, blank=True)
 
     def __str__(self):
         return self.arm
