@@ -1,7 +1,7 @@
 from django.shortcuts import redirect, render
 import csv
 import io
-from .models import Sequence, Patient
+from .models import Sequence, Patient, INCLUSION_CHOICES
 from django.contrib import messages
 from .forms import PatientForm
 import datetime
@@ -32,7 +32,7 @@ def screening(request):
         # arm = None
         # hn = None
         if form.is_valid():
-            if len(form.instance.inclusion) == 3 and len(form.instance.exclusion) == 0:
+            if len(form.instance.inclusion) == len(INCLUSION_CHOICES) and len(form.instance.exclusion) == 0:
                 form.instance.eligible = True
                 messages.success(request, 'ผู้ป่วย ' +
                                  form.instance.hospital_number + ' ผ่านการ Screening (Success)')
